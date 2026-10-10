@@ -4,7 +4,7 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lab.mapper.EmpMapper">
 
-    <!-- 自定义结果映射：解决字段名与属性名不一致 -->
+    <!-- ============ 结果映射：解决字段名与属性名不一致 ============ -->
     <resultMap id="empMap" type="Emp">
         <id property="empId" column="emp_id"/>
         <result property="empName" column="emp_name"/>
@@ -20,33 +20,17 @@
         emp_id, emp_name, gender, dept, post, salary, hire_date, status
     </sql>
 
+    <!-- ============ 任务 2：基础 CRUD（查询部分） ============ -->
     <select id="selectAll" resultMap="empMap">
         SELECT <include refid="allColumns"/> FROM emp
     </select>
 
-    <select id="selectById" parameterType="int" resultMap="empMap">
-        SELECT <include refid="allColumns"/> FROM emp WHERE emp_id = #{empId}
-    </select>
+    <!--
+      说明：insert / selectById / updateById / deleteById 由 MyBatis-Plus 的
+      BaseMapper 自动注入，无需（也不能）在此重复定义，否则会因语句 id 重复报错。
+    -->
 
-    <!-- 新增并回填自增主键 -->
-    <insert id="insert" parameterType="Emp"
-            useGeneratedKeys="true" keyProperty="empId">
-        INSERT INTO emp (emp_name, gender, dept, post, salary, hire_date, status)
-        VALUES (#{empName}, #{gender}, #{dept}, #{post}, #{salary}, #{hireDate}, #{status})
-    </insert>
-
-    <update id="update" parameterType="Emp">
-        UPDATE emp
-        SET emp_name = #{empName}, gender = #{gender}, dept = #{dept},
-            post = #{post}, salary = #{salary}, status = #{status}
-        WHERE emp_id = #{empId}
-    </update>
-
-    <delete id="deleteById" parameterType="int">
-        DELETE FROM emp WHERE emp_id = #{empId}
-    </delete>
-
-    <!-- 任务3: 多条件模糊查询（if / where 标签） -->
+    <!-- ============ 任务 3.1：多条件模糊查询（if / where） ============ -->
     <select id="selectByCondition" parameterType="Emp" resultMap="empMap">
         SELECT <include refid="allColumns"/> FROM emp
         <where>
@@ -65,7 +49,26 @@
         </where>
     </select>
 
-    <!-- 动态更新（set 标签） -->
+    <!-- ============ 任务 3.1：用 trim 实现等效逻辑 ============ -->
+    <select id="selectByConditionTrim" parameterType="Emp" resultMap="empMap">
+        SELECT <include refid="allColumns"/> FROM emp
+        <trim prefix="WHERE" prefixOverrides="AND |OR ">
+            <if test="empName != null and empName != ''">
+                AND emp_name LIKE CONCAT('%', #{empName}, '%')
+            </if>
+            <if test="gender != null and gender != ''">
+                AND gender = #{gender}
+            </if>
+            <if test="dept != null and dept != ''">
+                AND dept = #{dept}
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+        </trim>
+    </select>
+
+    <!-- ============ 任务 3.2：动态更新（set） ============ -->
     <update id="updateDynamic" parameterType="Emp">
         UPDATE emp
         <set>
@@ -78,7 +81,8 @@
         WHERE emp_id = #{empId}
     </update>
 
-    <!-- 批量删除 -->
+    <!-- ============ 任务 3.3：批量删除（foreach） ============ -->
+    <!-- int deleteBatch(@Param("ids") List<Integer> ids); -->
     <delete id="deleteBatch">
         DELETE FROM emp WHERE emp_id IN
         <foreach collection="ids" item="id" open="(" separator="," close=")">
@@ -86,11 +90,32 @@
         </foreach>
     </delete>
 
-    <!-- 批量插入 -->
+    <!-- ============ 任务 3.3：批量插入（foreach） ============ -->
+    <!-- int insertBatch(@Param("list") List<Emp> emps); -->
     <insert id="insertBatch">
         INSERT INTO emp (emp_name, gender, dept, post, salary, hire_date, status) VALUES
         <foreach collection="list" item="e" separator=",">
             (#{e.empName}, #{e.gender}, #{e.dept}, #{e.post}, #{e.salary}, #{e.hireDate}, #{e.status})
         </foreach>
     </insert>
+
+    <!-- ============ 任务 3.4：分支选择（choose / when / otherwise） ============ -->
+    <!-- 优先按姓名精确查询，否则按部门查询，否则查询全部在职员工 -->
+    <select id="selectByChoose" parameterType="Emp" resultMap="empMap">
+        SELECT <include refid="allColumns"/> FROM emp
+        <where>
+            <choose>
+                <when test="empName != null and empName != ''">
+                    AND emp_name = #{empName}
+                </when>
+                <when test="dept != null and dept != ''">
+                    AND dept = #{dept}
+                </when>
+                <otherwise>
+                    AND status = 1
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
 </mapper>

@@ -9,22 +9,30 @@
         <!-- 指定日志实现为 LOG4J -->
         <setting name="logImpl" value="LOG4J"/>
     </settings>
+
     <typeAliases>
         <!-- 为实体类别名，映射文件中可直接写 Emp -->
         <package name="com.lab.entity"/>
     </typeAliases>
+
+    <!-- 任务 4.5：注册 MyBatis-Plus 分页（及通用处理）插件 -->
+    <plugins>
+        <plugin interceptor="com.lab.config.MybatisPlusPageInterceptor"/>
+    </plugins>
+
     <environments default="development">
         <environment id="development">
             <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
                 <property name="url"
-                    value="jdbc:mysql://localhost:3306/ssm_emp?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8"/>
+                    value="jdbc:mysql://localhost:3306/ssm_emp?useSSL=false&amp;serverTimezone=Asia/Shanghai&amp;characterEncoding=utf8"/>
                 <property name="username" value="root"/>
                 <property name="password" value="123456"/>
             </dataSource>
         </environment>
     </environments>
+
     <mappers>
         <package name="com.lab.mapper"/>
     </mappers>
