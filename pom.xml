@@ -4,22 +4,23 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.skilldemo</groupId>
-    <artifactId>JavaTest-1</artifactId>
+    <groupId>com.lab</groupId>
+    <artifactId>mybatis-lab</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- MyBatis-Plus 3.5.x 需要 Java 8+ -->
     </properties>
 
     <dependencies>
-        <!-- MyBatis -->
+        <!-- MyBatis-Plus（内置 MyBatis） -->
         <dependency>
-            <groupId>org.mybatis</groupId>
-            <artifactId>mybatis</artifactId>
-            <version>3.5.13</version>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus</artifactId>
+            <version>3.5.3.1</version>
         </dependency>
         <!-- MySQL 驱动 -->
         <dependency>
