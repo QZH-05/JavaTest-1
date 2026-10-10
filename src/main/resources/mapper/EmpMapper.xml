@@ -46,7 +46,7 @@
         DELETE FROM emp WHERE emp_id = #{empId}
     </delete>
 
-    <!-- 多条件模糊查询（if / where 标签） -->
+    <!-- 任务3: 多条件模糊查询（if / where 标签） -->
     <select id="selectByCondition" parameterType="Emp" resultMap="empMap">
         SELECT <include refid="allColumns"/> FROM emp
         <where>

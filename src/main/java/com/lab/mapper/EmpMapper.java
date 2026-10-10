@@ -1,13 +1,25 @@
 package com.lab.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.lab.entity.Emp;
+import org.apache.ibatis.annotations.Param;
+import java.util.List;
 
-/**
- * MyBatis-Plus Mapper 接口
- * 继承 BaseMapper 即获得 insert(deleteById)updateById(selectById)selectList 等方法
- */
-public interface EmpMapper extends BaseMapper<Emp> {
-    // 继承后可直接使用通用CRUD方法
-    // 如需自定义 SQL，可继续添加方法
+public interface EmpMapper {
+    List<Emp> selectAll();
+    Emp selectById(Integer empId);
+    int insert(Emp emp);
+    int update(Emp emp);
+    int deleteById(Integer empId);
+    
+    // 任务3: 多条件模糊查询
+    List<Emp> selectByCondition(Emp emp);
+    
+    // 动态更新
+    int updateDynamic(Emp emp);
+    
+    // 批量删除
+    int deleteBatch(@Param("ids") List<Integer> ids);
+    
+    // 批量插入
+    int insertBatch(@Param("list") List<Emp> emps);
 }
