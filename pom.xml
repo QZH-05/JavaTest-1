@@ -15,11 +15,11 @@
     </properties>
 
     <dependencies>
-        <!-- MyBatis -->
+        <!-- MyBatis-Plus (包含 MyBatis 核心) -->
         <dependency>
-            <groupId>org.mybatis</groupId>
-            <artifactId>mybatis</artifactId>
-            <version>3.5.13</version>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus</artifactId>
+            <version>3.5.3.1</version>
         </dependency>
         <!-- MySQL 驱动 -->
         <dependency>
