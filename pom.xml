@@ -21,6 +21,18 @@
             <artifactId>mybatis-plus</artifactId>
             <version>3.5.3.1</version>
         </dependency>
+        <!--
+            说明：MyBatis-Plus 3.5.3.1 的 GenericTypeUtils 默认使用 SpringReflectionHelper
+            解析泛型（该类依赖 org.springframework.core.GenericTypeResolver），
+            因此非 Spring 工程需显式引入 spring-core，否则运行时报
+            NoClassDefFoundError: org/springframework/core/GenericTypeResolver。
+            仅用于满足 MP 内部依赖，本实验并未使用 Spring 容器。
+        -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>5.3.39</version>
+        </dependency>
         <!-- MySQL 驱动 -->
         <dependency>
             <groupId>com.mysql</groupId>

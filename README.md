@@ -35,7 +35,7 @@ src/main/java/com/lab
 src/main/resources
 ├── mybatis-config.xml                   # 全局配置
 ├── log4j.properties                     # 日志配置
-└── mapper/EmpMapper.xml                 # SQL 映射（动态 SQL）
+└── com/lab/mapper/EmpMapper.xml         # SQL 映射（必须与 Mapper 接口同包路径）
 
 src/test/java/com/lab/test
 └── EmpMapperTest.java                   # JUnit 单元测试
@@ -55,6 +55,22 @@ sql/init.sql                             # 建库建表脚本
 
 - **XML 与 BaseMapper 共存**：`BaseMapper` 已提供 `insert/selectById/updateById/deleteById`，
   自定义 XML 方法使用不重名的方法名，避免语句 id 冲突。
+- **XML 位置**：`mybatis-config.xml` 用 `<package name="com.lab.mapper"/>` 扫描，
+  MyBatis 会到 **同包路径** 下查找 `EmpMapper.xml`，故映射文件放在
+  `src/main/resources/com/lab/mapper/EmpMapper.xml`（而非 `resources/mapper/`）。
+- **spring-core 依赖**：MyBatis-Plus 3.5.3.1 的 `GenericTypeUtils` 默认使用
+  `SpringReflectionHelper`（依赖 `org.springframework.core.GenericTypeResolver`）解析泛型，
+  非 Spring 工程必须引入 `spring-core`，否则运行时报 `NoClassDefFoundError`。
 - **分页插件**：MP 3.5.x 需以对象方式 `addInnerInterceptor(new PaginationInnerInterceptor(...))`，
-  故自定义 `MybatisPlusPageInterceptor` 并通过 `<plugins>` 注册。
+  故自定义 `MybatisPlusPageInterceptor`（并重新声明 `@Intercepts`，注解不会被继承）并通过 `<plugins>` 注册。
 - **`status` 字段**：不使用 `@TableLogic`，作为“1在职/0离职”的业务状态字段处理。
+
+## 6. 命令行构建（可选）
+
+若已把 Maven 加入 PATH，可在项目根目录直接执行：
+
+```bash
+mvn clean test-compile   # 编译
+mvn test                 # 运行单元测试
+mvn exec:java -Dexec.mainClass=com.lab.testmp.MyBatisPlusDemo
+```
